@@ -14,7 +14,7 @@ def mask_account_card(account_info: str) -> str:
     if "Счет" in account_info:
         number = account_info.split()[-1]
 
-        # Проверка на корректность номера
+        #Проверка на корректность номера
         if not is_valid_number(number):
             return "Некорректный номер"
 
