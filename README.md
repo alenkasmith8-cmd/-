@@ -8,7 +8,7 @@
 
 1. Клонируйте репозиторий:
 
-   git clone git@github.com:alenkasmith8-cmd/-.git
+   [git clone] (https://github.com:alenkasmith8-cmd/-.git)
    cd bank_operations
    
 
