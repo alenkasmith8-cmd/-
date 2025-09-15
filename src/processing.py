@@ -20,3 +20,4 @@ def sort_by_date(data: List[Dict], descending: bool = True) -> List[Dict]:
     """
 
     return sorted(data, key=lambda x: x['date'], reverse=descending)
+
