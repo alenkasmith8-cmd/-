@@ -1,23 +1,25 @@
-from typing import Dict
-from typing import List
+from typing import Dict, List
 
 
-def filter_by_state(data: List[Dict], state: str = 'EXECUTED') -> List[Dict]:
-    """Функция фильтрует список словарей по значению ключа 'state'
-    :param data:Список словарей с бакновскими операциями.
-    :param state: Значение для ключа 'state', по умолчанию 'EXECUTED'.
-    :return: Новый список словарей с совпадающим состоянием.
+def filter_by_state(items: List[Dict[str, str]], state: str = 'EXECUTED') -> List[Dict[str, str]]:
+
+    """ Функция фильтрует список словарей по значению ключа 'state'.
+    :param items:Список словарей которые необходимо отфильтровать.
+    :param state: Значение по которому будет произведена фильтрация.
+    :return: Новый список словарей содержащий только те у которых
+     значение ключа 'state', соответствует переданному.
     """
 
-    return [item for item in data if item['state'] == state]
+    return [item for item in items if item.get('state') == state]
 
 
-def sort_by_date(data: List[Dict], descending: bool = True) -> List[Dict]:
-    """Функция сортирует список словарей по ключу 'date'
-    :param data: Список словарей с банковскими операциияями.
-    :param descending: Порядок сортировки, по умолчанию по убыванию.
-    :return: Новый список словарей, отсортированный по дате.
+def sort_by_date(items: List[Dict[str, str]], reverse: bool = True) -> List[Dict[str, str]]:
+
+    """
+    Сортирует список словарей по дате.
+
+    :param items: Список словарей, содержащих информацию с датами.
+    :return: Новый список отсортированных словарей по ключу 'date'.
     """
 
-    return sorted(data, key=lambda x: x['date'], reverse=descending)
-
+    return sorted(items, key=lambda x: x['date'], reverse=reverse)
