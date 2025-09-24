@@ -12,7 +12,7 @@
 2. 
 2. Клонируйте репозиторий:
 
-   [git clone] (https://github.com/alenkasmith8-cmd/-/pull/4)
+   [git clone] (https://github.com/alenkasmith8-cmd/-/pull/5)
    
 
 
