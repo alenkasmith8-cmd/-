@@ -1,25 +1,19 @@
 from typing import Dict, List
+from datetime import datetime
 
 
 def filter_by_state(items: List[Dict[str, str]], state: str = 'EXECUTED') -> List[Dict[str, str]]:
-
-    """ Функция фильтрует список словарей по значению ключа 'state'.
-    :param items:Список словарей которые необходимо отфильтровать.
-    :param state: Значение по которому будет произведена фильтрация.
-    :return: Новый список словарей содержащий только те у которых
-     значение ключа 'state', соответствует переданному.
-    """
+    """Функция фильтрует список словарей по значению ключа 'state'."""
 
     return [item for item in items if item.get('state') == state]
 
 
 def sort_by_date(items: List[Dict[str, str]], reverse: bool = True) -> List[Dict[str, str]]:
-
-    """
-    Сортирует список словарей по дате.
+    """Сортирует список словарей по дате и id.
 
     :param items: Список словарей, содержащих информацию с датами.
-    :return: Новый список отсортированных словарей по ключу 'date'.
+    :param reverse: Указывает, сортировать ли в обратном порядке.
+    :return: Новый список отсортированных словарей по ключам 'date' и 'id'.
     """
 
-    return sorted(items, key=lambda x: x['date'], reverse=reverse)
+    return sorted(items, key=lambda x: (datetime.strptime(x['date'], "%Y-%m-%d"), x['id']), reverse=reverse)
