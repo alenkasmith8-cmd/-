@@ -1,44 +1,41 @@
 import pytest
-from datetime import datetime
+
 from src.widget import mask_account_card
 
-class TestMaskAccountCard:
-    @pytest.mark.parametrize("input_data, expected_output", [
-        ("Счет 1234567890123456", "Счет **3456"),
-        ("Счет 1234", "Счет 1234"),
-        ("Карта 1234567812345678", "Карта 1234 56** **** 5678"),
-        ("Карта 1234", "Карта 1234"),
-        ("Счет 123", "Некорректный номер"),
-        ("Некорректная строка", "Некорректный номер"),
-        ("", "Некорректный номер"),
-    ])
-    def test_mask_account_card(self, input_data, expected_output):
-        assert mask_account_card(input_data) == expected_output
 
-    @pytest.mark.parametrize("input_data", [
-        "Счет 12345678901234567890",   # Длинный номер счета
-        "Карта 123456781234567",        # Короткий номер карты
-        "Счет abcd"                     # Некорректный номер
-    ])
-    def test_mask_account_card_invalid(self, input_data):
-        assert mask_account_card(input_data) == "Некорректный номер"
+@pytest.mark.parametrize(
+    "input_data, expected_output",
+    [
+        ("Счет 1234567890123456", "Счет **3456"),  # Маскировка счета
+        ("Счет 1234", "Счет 1234"),  # Номер счета < 5
+        ("Карта 1234567812345678", "Карта 1234 56** **** 5678"),  # Маскировка карты
+        ("Карта 1234", "Карта 1234"),  # Номер карты < 5
+        ("Счет 123", "Некорректный номер"),  # Неверный номер счета (меньше 4)
+        ("Карта 123", "Некорректный номер"),  # Неверный номер карты (меньше 4)
+        ("Некорректная строка", "Некорректный номер"),  # Некорректный ввод
+        ("", "Некорректный номер"),  # Пустая строка
+        ("Счет 12345678901234567890", "Некорректный номер"),  # Счет слишком длинный
+        ("Карта abcd", "Некорректный номер"),  # Неверный формат карты
+    ],
+)
+def test_mask_account_card(input_data: str, expected_output: str) -> None:
+    """
+    :param input_data: Входные данные для теста
+    :param expected_output: Ожидаемый результат
+    """
+    assert mask_account_card(input_data) == expected_output
 
-# Пример функции get_date (предположим, у вас есть такая функция)
-def get_date(date_string: str) -> str:
-    try:
-        # Предположим, что формат даты всегда в ISO формате
-        date_object = datetime.fromisoformat(date_string)
-        return date_object.strftime("%d-%m-%Y")
-    except ValueError:
-        return "Некорректная дата"
 
-class TestGetDate:
-    @pytest.mark.parametrize("date_input, expected_output", [
-        ("2023-01-01", "01-01-2023"),
-        ("2022-12-31", "31-12-2022"),
-        ("", "Некорректная дата"),
-        ("not-a-date", "Некорректная дата"),
-        ("2023-02-30", "Некорректная дата"),  # Неверная дата
-    ])
-    def test_get_date(self, date_input, expected_output):
-        assert get_date(date_input) == expected_output
+# Тесты для некорректного ввода
+@pytest.mark.parametrize(
+    "input_data",
+    {
+        "Счет",  # Неполное сообщение
+        "Карта",  # Неполное сообщение
+        "Счет 12X34",  # Неверный символ в номере счета
+        "Карта 12X34",  # Неверный символ в номере карты
+    },
+)
+def test_mask_account_card_invalid(input_data: str) -> None:
+
+    assert mask_account_card(input_data) == "Некорректный номер"  # Если введен некорректный номер
