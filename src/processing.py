@@ -8,7 +8,7 @@ def filter_by_state(items: List[Dict[str, str]], state: str = 'EXECUTED') -> Lis
     return [item for item in items if item.get('state') == state]
 
 
-def sort_by_date(items: List[Dict[str, str]], reverse: bool = True) -> List[Dict[str, str]]:
+def sort_by_date(items: List[Dict[str, str]], reverse: bool = False) -> List[Dict[str, str]]:
     """Сортирует список словарей по дате и id.
 
     :param items: Список словарей, содержащих информацию с датами.
