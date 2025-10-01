@@ -1,10 +1,11 @@
-#Банковское приложение
+# Банковское приложение
 
-##Цель проекта 
+   
+## Цель проекта 
 Этот проект предоставляет функции для маскирования номеров карт и банковских счетов.
 Функции позволяют скрыть определенные части номеров и защищают личные данные пользователей.
 
-##Установка
+## Установка
 
 Для установки необходимых зависимостей выполните следующие команды:
 
@@ -12,7 +13,7 @@
 
 2. Клонируйте репозиторий:
 
-   [git clone] (https://github.com/alenkasmith8-cmd/-/pull/5)
+   [git clone] (https://github.com/alenkasmith8-cmd/-/pull/9)
    
 
 
@@ -31,7 +32,7 @@ items = [
 filtered_items = filter_by_state(items)
 print(filtered_items)  # Output: [{'id': 1, 'state': 'EXECUTED'}]
 ```
-
+```
 Сортировка по дате
 Функция sort_by_date() принимает список словарей и параметр reverse, который задает порядок сортировки.
 
@@ -44,7 +45,8 @@ items = [
 sorted_items = sort_by_date(items)
 print(sorted_items)  # Output: [{'id': 1, 'date': '2023-01-01T12:00:00'}, {'id': 2, 'date': '2022-12-31T12:00:00'}]
 
-
+```
+```
 ## Тестирование
 
 Для тестирования проекта используются библиотеки pytest.
@@ -60,6 +62,8 @@ pytest
 bash
 pytest tests/test_файл.py
 
+```
+```
 ### Описание тестов
 
 Тестирование модуля masks: Проверяет функции маскирования на разные сценарии ввода, чтобы убедиться, 
@@ -69,3 +73,45 @@ pytest tests/test_файл.py
 Функция filter_by_state() тестируется на правильность фильтрации по статусу, включая случаи с отсутствующими результатами.
 Функция sort_by_date() тестируется на правильность сортировки по дате, включая сортировку с одинаковыми датами 
 и на пустом списке.
+
+
+# Модуль Generators
+
+## Функции генераторов
+
+### 1. `filter_by_currency(transactions, currency_code)`
+
+Генератор, который возвращает транзакции с заданной валютой. 
+
+**Пример использования:**
+python
+usd_transactions = filter_by_currency(transactions, "USD")
+for transaction in usd_transactions:
+    print(transaction)
+
+### 2. `transaction_descriptions(transactions)`
+
+Генератор, который возвращает описание каждой транзакции.
+
+**Пример использования:**
+python
+descriptions = transaction_descriptions(transactions)
+for description in descriptions:
+    print(description)
+
+### 3. `card_number_generator(start, end)`
+
+Генератор, который выдает номера банковских карт в формате XXXX XXXX XXXX XXXX.
+
+**Пример использования:**
+python
+for card_number in card_number_generator(1, 5):
+    print(" ".join(card_number))
+
+
+
+### Запуск тестов
+
+Чтобы запустить тесты, используйте команду:
+bash
+python -m unittest test_generators.py
