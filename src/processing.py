@@ -1,5 +1,6 @@
-from typing import Dict, List
 from datetime import datetime
+from typing import Dict
+from typing import List
 
 
 def filter_by_state(items: List[Dict[str, str]], state: str = 'EXECUTED') -> List[Dict[str, str]]:

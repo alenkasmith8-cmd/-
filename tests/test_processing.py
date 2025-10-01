@@ -1,8 +1,10 @@
-from typing import List, Dict
+from typing import Dict
+from typing import List
 
 import pytest
 
-from src.processing import filter_by_state, sort_by_date
+from src.processing import filter_by_state
+from src.processing import sort_by_date
 
 
 @pytest.fixture
