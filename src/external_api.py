@@ -15,8 +15,8 @@ def get_exchange_rate(base_currency: str, target_currency: str) -> float:
         raise ValueError("API_KEY is missing from environment variables.")
 
     url = (
-        f"https://api.apilayer.com/exchangerates_data/latest?base={base_currency}&symbols="
-        f"{target_currency}&apikey={api_key}"
+        f"'https://api.apilayer.com/currency_data/convert?base=USD&symbols=EUR,GBP,JPY&amount=5&date=2018-01-01'="
+        f"{base_currency}&symbols=""{target_currency}&apikey={api_key}"
     )
     response = requests.get(url)
 
