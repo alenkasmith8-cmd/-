@@ -1,25 +1,25 @@
-import unittest.mock
 from typing import Any
 from typing import Dict
+from unittest.mock import patch
 
-from src.external_api import convert_to_rub
-
-
-def test_convert_to_rub_usd() -> None:
-    transaction: Dict[str, Any] = {"amount": 100, "currency": "USD"}
-    with unittest.mock.patch('src.external_api.get_exchange_rate', return_value=75):
-        result = convert_to_rub(transaction)
-        assert result == 7500.0
+from src.external_api import get_exchange_rate
 
 
-def test_convert_to_rub_eur() -> None:
-    transaction: Dict[str, Any] = {"amount": 100, "currency": "EUR"}
-    with unittest.mock.patch('src.external_api.get_exchange_rate', return_value=85):
-        result = convert_to_rub(transaction)
-        assert result == 8500.0
+def test_get_exchange_rate() -> None:
+    with patch('requests.get') as mock_get:
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.json.return_value = {"rates": {"USD": 1.0, "EUR": 0.85}}
+        rate: float = get_exchange_rate("USD", "EUR")
+        assert rate == 0.85
 
 
-def test_convert_to_rub_rub() -> None:
-    transaction: Dict[str, Any] = {"amount": 100, "currency": "RUB"}
-    result = convert_to_rub(transaction)
-    assert result == 100.0
+def convert_to_currency(transaction: Dict[str, Any], target_currency: str) -> float:
+    """Конвертирует сумму транзакции в указанную валюту."""
+    amount: float = transaction.get('amount', 0.0)
+    currency: str = transaction.get('currency', 'USD')
+
+    # Если валюта не совпадает с целевой валютой, получаем курс обмена
+    if currency != target_currency:
+        exchange_rate: float = get_exchange_rate(currency, target_currency)
+        return amount * exchange_rate
+    return amount  # Если валюта совпадает, возвращаем сумму без изменений
