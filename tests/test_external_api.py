@@ -1,25 +1,19 @@
 from unittest.mock import patch
-
-from src.external_api import get_exchange_rate
-
-
-def test_get_exchange_rate() -> None:
-    with patch('requests.get') as mock_get:
-        mock_get.return_value.status_code = 200
-        mock_get.return_value.json.return_value = {"result": 0.85}
-        rate: float = get_exchange_rate("USD", "EUR")
-        assert rate == 0.85
+from src.external_api import convert_amount_to_rub
 
 
-def convert_to_currency() -> None:
-    """Конвертирует сумму транзакции в указанную валюту."""
+@patch('requests.get')
+def test_convert_amount_to_rub(mock_get) -> None:
     transaction = {"amount": 100, "currency": "USD"}
-    target_currency = "EUR"
 
-    with patch('src.external_api.get_exchange_rate') as mock_get_exchange_rate:
-        # Допустим, что курс обмена USD на EUR равен 0.85
-        mock_get_exchange_rate.return_value = 0.85
-        converted_amount = convert_to_currency(transaction, target_currency)
+    mock_get.return_value.status_code = 200
+    mock_get.return_value.json.return_value = {"result": 7500.0}
 
-        # Проверяем, что результат соответствует ожиданиям
-        assert converted_amount == 85.0
+    # Перед тестированием проверьте, что установили ключ API
+    with patch.dict('os.environ', {'API_KEY': 'fake_api_key'}):
+        amount_in_rub = convert_amount_to_rub(transaction)
+        assert amount_in_rub == 7500.0
+
+    # тестирование уже в рублях
+    transaction_rub = {"amount": 100, "currency": "RUB"}
+    assert convert_amount_to_rub(transaction_rub) == 100.0
