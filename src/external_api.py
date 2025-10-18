@@ -1,20 +1,23 @@
 import os
-from typing import Any
 from typing import Dict
-
 import requests
-from dotenv import load_dotenv
-
-load_dotenv()  # Загружаем переменные окружения из .env
 
 
-def get_exchange_rate(base_currency: str, target_currency: str) -> float:
-    """Получает курс валюты"""
+def convert_amount_to_rub(transaction: Dict[str, float]) -> float:
+    """Конвертирует сумму транзакции в рубли."""
+    amount = transaction.get('amount', 0.0)
+    currency = transaction.get('currency', 'RUB')
+
+    # Если валюта уже в рублях, возвращаем сумму без изменений
+    if currency == 'RUB':
+        return float(amount)
+
+    # Получаем курс обмена из API
     api_key = os.getenv('API_KEY')
     if not api_key:
         raise ValueError("API_KEY is missing from environment variables.")
 
-    url = f"https://api.apilayer.com/currency_data/convert?from={base_currency}&to={target_currency}&amount=1"
+    url = f"https://api.apilayer.com/exchangerates_data/convert?to=RUB&from={currency}&amount={amount}"
     headers = {"apikey": api_key}
 
     response = requests.get(url, headers=headers)
@@ -23,16 +26,4 @@ def get_exchange_rate(base_currency: str, target_currency: str) -> float:
         raise Exception(f"Error fetching data: {response.status_code}")
 
     data = response.json()
-    return data['result']
-
-
-def convert_to_currency(transaction: Dict[str, Any], target_currency: str) -> float:
-    """Конвертирует сумму транзакции в указанную валюту."""
-    amount: float = transaction.get('amount', 0.0)
-    currency: str = transaction.get('currency', 'USD')
-
-    # Если валюта не совпадает с целевой, получаем курс обмена
-    if currency != target_currency:
-        exchange_rate: float = get_exchange_rate(currency, target_currency)
-        return amount * exchange_rate
-    return amount  # Если валюта совпадает, возвращаем сумму без изменений
+    return float(data.get('result', 0.0))  # Возвращаем значение, возвращенное API
