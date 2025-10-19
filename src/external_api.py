@@ -5,8 +5,8 @@ import requests
 
 def convert_amount_to_rub(transaction: Dict[str, float]) -> float:
     """Конвертирует сумму транзакции в рубли."""
-    amount = transaction.get('amount', 0.0)
-    currency = transaction.get('currency', 'RUB')
+    amount = transaction['operationAmount']['amount']
+    currency = transaction['operationAmount'].get('currency', 'RUB')
 
     # Если валюта уже в рублях, возвращаем сумму без изменений
     if currency == 'RUB':
