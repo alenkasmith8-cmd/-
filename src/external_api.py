@@ -16,7 +16,7 @@ def convert_amount_to_rub(transaction: dict) -> float:
         float: Сумма транзакции в рублях."""
 
     amount = transaction['operationAmount']['amount']
-    currency = transaction['operationAmount']['currency']
+    currency = transaction['operationAmount']['currency']['code']
 
     # Если валюта уже в рублях, возвращаем сумму без изменений
     if currency == 'RUB':
