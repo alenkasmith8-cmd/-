@@ -5,7 +5,7 @@ from src.external_api import convert_amount_to_rub
 
 @patch('requests.get')
 def test_convert_amount_to_rub(mock_get) -> None:
-    transaction = {"operationAmount": {"amount": 100, "currency": "USD"}}
+    transaction = {"operationAmount": {"amount": 100, "currency": dict(name="USD", code="USD")}}
 
     mock_get.return_value.status_code = 200
     mock_get.return_value.json.return_value = {"result": 7500.0}
@@ -16,5 +16,5 @@ def test_convert_amount_to_rub(mock_get) -> None:
         assert amount_in_rub == 7500.0
 
     # тестирование уже в рублях
-    transaction_rub = {"operationAmount": {"amount": 100, "currency": "RUB"}}
+    transaction_rub = {"operationAmount": {"amount": 100, "currency": dict(name="RUB", code="RUB")}}
     assert convert_amount_to_rub(transaction_rub) == 100.0
