@@ -6,7 +6,7 @@ from typing import List
 
 import pandas as pd
 
-from src.config import DATA_DIR
+from config import DATA_DIR
 
 # Путь к файлам
 csv_file_path = DATA_DIR / "transactions.csv"  # Путь к файлу csv
