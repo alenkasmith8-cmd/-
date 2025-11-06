@@ -3,11 +3,15 @@ import json
 import logging
 import os
 import re
+from pathlib import Path
 
 import pytest
 
 import src.main
 from config import LOG_DIR
+
+base_dir = Path(__file__).parent
+json_file_path = "data/operations.json"
 
 # Настройка логирования
 logging.basicConfig(
@@ -23,6 +27,27 @@ logger = logging.getLogger(__name__)
 # json_file = os.path.join(DATA_DIR, 'operations.json')
 # csv_file = os.path.join(DATA_DIR, 'transactions.csv')
 # excel_file = os.path.join(DATA_DIR, 'transactions_excel.xlsx')
+
+
+def test_count_operations_by_category():
+    transactions = [
+        {"operationAmount": {"amount": "1000"}, "category": "Зарплата"},
+        {"operationAmount": {"amount": "500"}, "category": "Зарплата"},
+        {"operationAmount": {"amount": "200"}, "category": "Покупка"},
+        {"operationAmount": {"amount": "300"}, "category": "Покупка"},
+    ]
+    categories = ["Зарплата", "Покупка"]
+
+    result = src.main.count_operations_by_category(transactions, categories)
+
+    assert result["Зарплата"] == 1500  # Сумма зарплаты
+    assert result["Покупка"] == 500  # Сумма покупок
+
+    # Тест с категориями, отсутствующими в транзакциях
+    categories = ["Зарплата", "Покупка", "Неправильная категория"]
+    result = src.main.count_operations_by_category(transactions, categories)
+
+    assert result["Неправильная категория"] == 0  # Проверяем, что отсутствующая категория равна 0
 
 
 def test_load_transactions_json_success(tmp_path):
@@ -362,21 +387,19 @@ def test_format_transaction():
 
 @pytest.mark.timeout(10)
 def test_main_json(monkeypatch, tmp_path):
-    """
-
-    :type monkeypatch: object
-    """
     # Создаем временный JSON-файл
     data = [
         {
             "id": 1,
             "state": "EXECUTED",
             "date": "2023-01-01",
+            "description": "Тестовая транзакция",
             "operationAmount": {"amount": "1000", "currency": {"name": "Ruble", "code": "RUB"}},
         }
     ]
-    file = tmp_path / "operations.json"
-    file.write_text(json.dumps(data), encoding="utf-8")
+    # Создаем файл с использованием tmp_path
+    file_path = tmp_path / "operations.json"
+    file_path.write_text(json.dumps(data), encoding="utf-8")
 
     # Эмулируем ввод пользователя
     monkeypatch.setattr(
@@ -393,11 +416,11 @@ def test_main_json(monkeypatch, tmp_path):
     )  # Эмулируем ввод для каждого ожидаемого запроса
 
     # Установите DATA_DIR для теста
-    monkeypatch.setattr("config.DATA_DIR", str(tmp_path))
+    monkeypatch.setattr("config.DATA_DIR", str(tmp_path))  # Устанавливаем временный путь
 
-    # Печать перед вызовом main для отладки
+    # Вызов функции main
     print("Before calling main()")
-    src.main.main()  # Вызов функции main
+    src.main.main()
     print("After calling main()")
 
 

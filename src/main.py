@@ -10,16 +10,39 @@ import config
 
 # from src.transaction_cvs_xlsx import filter_transactions
 # from src.utils import load_transactions
-
+from config import LOG_DIR
 
 # Настройка логирования
 logging.basicConfig(
     level=logging.INFO,
-    handlers=[logging.StreamHandler(), logging.FileHandler(os.path.join(config.LOG_DIR, "app.log"), encoding="utf-8")],
+    handlers=[logging.StreamHandler(), logging.FileHandler(os.path.join(LOG_DIR, "app.log"), encoding="utf-8")],
     format="%(asctime)s - %(levelname)s - %(message)s",
 )
 
 logger = logging.getLogger(__name__)
+
+
+def count_operations_by_category(transactions, categories):
+    """
+    Подсчитывает общую сумму операций по заданным категориям.
+
+    Args:
+        transactions (list): Список транзакций, где каждая транзакция содержит 'amount' и 'category'.
+        categories (list): Список категорий для подсчета.
+
+    Returns:
+        dict: Словарь, где ключи - категории, а значения - сумма транзакций в этих категориях.
+    """
+    category_totals = {category: 0 for category in categories}  # Инициализируем словарь с нулевыми значениями
+
+    for transaction in transactions:
+        category = transaction.get('category')
+        amount = float(transaction.get('operationAmount', {}).get('amount', 0))  # Приводим к float для операций
+
+        if category in categories:  # Проверяем, если категория в заданном списке
+            category_totals[category] += amount  # Увеличиваем сумму по категории
+
+    return category_totals
 
 
 # Функция загрузки транзакций из файла
@@ -180,14 +203,11 @@ def format_date(date_string):
 def print_transaction(transaction):
     """Выводит информацию о транзакции в требуемом формате."""
     date = format_date(transaction["date"])
-    description = transaction.get("description", "Без описания")
+    description = transaction["description"]
 
     # Получаем значения from и to, обрабатываем пустые значения
     from_account = transaction.get("from", "")
     to_account = transaction.get("to", "")
-
-    # Вывод информации о транзакции
-    print(f"Дата: {date}, Описание: {description}, От: {from_account}, До: {to_account}")
 
     # Заменяем NaN или пустую строку на пробел
     if isinstance(from_account, float) or not from_account:
@@ -233,15 +253,15 @@ def main():
     choice = input("Пользователь: ")
 
     if choice == "1":
-        file_path = os.path.join(config.DATA_DIR, "operations.json")
+        file_path = os.path.join(config.DATA_DIR, "operations.json")  # Используем DATA_DIR
         transactions = load_transactions(file_path)
         print("Программа: Для обработки выбран JSON-файл.")
     elif choice == "2":
-        file_path = os.path.join(config.DATA_DIR, "transactions.csv")
+        file_path = os.path.join(config.DATA_DIR, "transactions.csv")  # Используем DATA_DIR
         transactions = load_transactions(file_path)
         print("Программа: Для обработки выбран CSV-файл.")
     elif choice == "3":
-        file_path = os.path.join(config.DATA_DIR, "transactions_excel.xlsx")
+        file_path = os.path.join(config.DATA_DIR, "transactions_excel.xlsx")  # Используем DATA_DIR
         transactions = load_transactions(file_path)
         print("Программа: Для обработки выбран XLSX-файл.")
     else:
